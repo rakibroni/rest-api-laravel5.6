@@ -2,10 +2,20 @@
 namespace App\Http\Controllers\API;
 use Illuminate\Http\Request; 
 use App\Http\Controllers\Controller; 
-use App\User; 
+use App\Models\Ati_sausers; 
 use Illuminate\Support\Facades\Auth; 
 use Validator;
 use DB;
+
+/*use App\Http\Requests;
+use Auth;
+//use DB;
+//use Illuminate\Support\Facades\Validator;
+use Input;
+use Redirect;
+use Session;
+use PDO;
+*/
 class UserController extends Controller 
 {
 public $successStatus = 200;
@@ -15,22 +25,24 @@ public $successStatus = 200;
      * @return \Illuminate\Http\Response 
      */ 
     public function login(){ 
-        if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ 
-            $user = Auth::user(); 
-            $success=  $user->createToken('MyApp')-> accessToken; 
-
+               
+       $userdata = array(
+            'AUSER_NAME'   => request('AUSER_NAME'),
+            'ASTATUS_FG'   => '1',
+            'password'     =>request('UPASSWORDS')
+            );
+        if (Auth::attempt($userdata)) {
+            $user = Auth::User();
+             
             return response()->json([
-                                    'success'=>true, 
-                                    'message'=>'string', 
-                                    'token'=>$success
-                                ]);
-            //return response()->json(['success' => $success], $this-> successStatus); 
-        } 
-        else{ 
-            return response()->json(['error'=>'Unauthorised'], 401); 
-        } 
+                            'success'=>true,                                      
+                            'details'=>$user
+                        ]);
+
+        }                    
     }
-/** 
+    
+    /** 
      * Register api 
      * 
      * @return \Illuminate\Http\Response 
@@ -43,30 +55,54 @@ public $successStatus = 200;
             'password' => 'required', 
             'c_password' => 'required|same:password', 
         ]);
-if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
-        }
-$input = $request->all(); 
-        $input['password'] = bcrypt($input['password']); 
-        $user = User::create($input); 
-        $success['token'] =  $user->createToken('MyApp')-> accessToken; 
-        $success['name'] =  $user->name;
-return response()->json(['success'=>$success], $this-> successStatus); 
+        if ($validator->fails()) { 
+                    return response()->json(['error'=>$validator->errors()], 401);            
+                }
+        $input = $request->all(); 
+                $input['password'] = bcrypt($input['password']); 
+                $user = User::create($input); 
+                $success['token'] =  $user->createToken('MyApp')-> accessToken; 
+                $success['name'] =  $user->name;
+        return response()->json(['success'=>$success], $this-> successStatus); 
     }
-/** 
+
+    /** 
      * details api 
      * 
      * @return \Illuminate\Http\Response 
      */ 
-    public function details() 
+    public function empMovementView() 
     { 
-        $user = Auth::user(); 
+        
+        $allClients=DB::table('ATI_CLIENTS')
+          ->where('ATI_CLIENTS.ASTATUS_FG','=',1)
+          ->orderBy('ATI_CLIENTS.CLIENTS_ID','=','ATI_CLIENTS.CLIENTS_ID')
+          ->get();
+
+        $allProject=DB::table('ATI_PROJECT')
+        ->where('ATI_PROJECT.ASTATUS_FG','=',1)
+        ->orderBy('ATI_PROJECT.PROJECT_ID','=','ATI_PROJECT.PROJECT_ID')
+        ->get(); 
+
+        $allEmployee=DB::table('HR_EMPLOYEE')
+        ->where('HR_EMPLOYEE.ASTATUS_FG','=',1)
+        ->orderBy('HR_EMPLOYEE.EMPLOYE_ID','=','HR_EMPLOYEE.EMPLOYE_ID')
+        ->get(); 
+                                    
+        $allMovefrom=DB::table('HRV_VISTFRM')
+        ->where('HRV_VISTFRM.ASTATUS_FG','=',1)
+        ->get();
         
         return response()->json([
-                                    'success'=>$user, 
-                                    'message'=>'string', 
-                                    $this-> successStatus
+                                    'success'=>true, 
+                                    'clients'=>$allClients,
+                                    'projects'=>$allProject,
+                                    'employee'=>$allEmployee,
+                                    'moveTitle'=>$allMovefrom
+
+                                     
                                 ]);
          
     } 
+
 }

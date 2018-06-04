@@ -77,6 +77,33 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
         ],
+        'oracle' => [
+          'driver'        => 'oracle',
+          'tns'           => '(DESCRIPTION=
+          (ADDRESS=
+          (PROTOCOL=TCP)
+          (HOST=192.168.0.246)
+          (PORT=1521)
+          )
+          (CONNECT_DATA=
+          (SERVICE_NAME=ORCL)
+          )
+          )',
+          'host'          => '192.168.0.246',
+          'port'          => '1521',
+          'database'      => 'ATI_ERP',
+     
+          'username'      => 'ATI_ERP',
+          'password'      => 'ATI_ERP',
+     
+          'charset'       => 'utf8',
+          'prefix'        => '',
+          'prefix_schema' => '',
+          'options' => [
+                    PDO::ATTR_CASE => PDO::CASE_UPPER,
+                ]
+        ],
+
 
     ],
 
