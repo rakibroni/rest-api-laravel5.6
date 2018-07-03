@@ -6,6 +6,7 @@ use App\Models\Ati_sausers;
 use Illuminate\Support\Facades\Auth; 
 use Validator;
 use DB;
+ 
 
 /*use App\Http\Requests;
 use Auth;
@@ -101,6 +102,32 @@ public $successStatus = 200;
                                     'moveTitle'=>$allMovefrom
 
                                      
+                                ]);
+         
+    } 
+     /** 
+     * details api 
+     * 
+     * @return \Illuminate\Http\Response 
+     */ 
+    public function saveEmpMovement(Request $request) 
+    { 
+       
+        $input=  $request->json()->all(); 
+
+      print_r($input);exit;
+      //  echo $input[0]['CLIENTS_ID'];exit;   
+        
+        $PRIMARY_IDD=DB::select(DB::raw("SELECT FNC_primekey('SEQ_ATI_EMP_MOVEMENT','1') NEXT_PK from dual"));
+        $PRIMARY_ID = $PRIMARY_IDD[0]->NEXT_PK;
+        DB::table('HR_MOVT_REC')->insert([
+                                        'MOVTREC_ID' => $PRIMARY_ID,                                       
+                                        'CLIENTS_ID' => $input[0]->CLIENTS_ID,
+                                        'PROJECT_ID' => $input[0]->PROJECT_ID
+
+                                      ]);
+        return response()->json([
+                                    'success'=>true 
                                 ]);
          
     } 
