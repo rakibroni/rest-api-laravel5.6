@@ -21,6 +21,7 @@ Route::post('login', 'API\UserController@login');
 Route::post('register', 'API\UserController@register');
 Route::post('save-employee-movement', 'API\UserController@saveEmpMovement');
 Route::get('employee-movement', 'API\UserController@empMovementView');
+Route::get('employee-movement-list/{employee_id}', 'API\UserController@empWiseMovementList');
 Route::group(['middleware' => 'auth:api'], function(){
 //Route::post('details', 'API\UserController@details');
 });
